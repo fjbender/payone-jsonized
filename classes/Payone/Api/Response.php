@@ -13,6 +13,9 @@ class Response
      */
     public static function toArray($rawResponse)
     {
+        /**
+         * Breaks up the Payone format and puts it into an array
+         */
         $responseArray = array();
         $explode = explode("\n", $rawResponse);
         foreach ($explode as $e) {

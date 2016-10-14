@@ -49,7 +49,7 @@ $c['notFoundHandler'] = function ($c) {
 };
 
 $app->post('/request/', function (Request $request, Response $response) {
-    return new \Payone\Api\Request($request, $response);
+    return $response->withJson(\Payone\Api\Request::send($request, $response));
 });
 
 $app->run();
