@@ -37,6 +37,14 @@ $c['logger'] = function($c) {
     $logger->pushHandler($file_handler);
     return $logger;
 };
+/**
+ * @param $c
+ * @return \Payone\Api\Service
+ */
+$c['payone'] = function($c) {
+    $payoneService = new \Payone\Api\Service();
+    return $payoneService;
+};
 
 /**
  * Error handlers
@@ -60,8 +68,8 @@ $c['notFoundHandler'] = function ($c) {
     };
 };
 
-$app->post('/request/', function (Request $request, Response $response) {
-    return $response->withJson(\Payone\Api\Request::send($request));
+$app->post('/request/', function (Request $request, Response $response) use ($c) {
+    return $response->withJson($c['payone']->sendRequest($request));
 });
 
 $app->run();

@@ -33,7 +33,7 @@ class Request
         ksort($body);
         $client = new Client();
         $payoneResponse = $client->post('https://api.pay1.de/post-gateway/', ['form_params' => $body]);
-        $parsedResponse = \Payone\Api\Response::toArray($payoneResponse->getBody());
+        $parsedResponse = Response::toArray($payoneResponse->getBody());
 
         return $parsedResponse;
     }
