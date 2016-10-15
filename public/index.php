@@ -25,13 +25,26 @@ spl_autoload_register(function ($class) {
 });
 
 $app = new Slim\App();
+$c = $app->getContainer();
+
+/**
+ * @param $c
+ * @return \Monolog\Logger
+ */
+$c['logger'] = function($c) {
+    $logger = new \Monolog\Logger('payoneJsonized');
+    $file_handler = new \Monolog\Handler\StreamHandler("../logs/app.log");
+    $logger->pushHandler($file_handler);
+    return $logger;
+};
 
 /**
  * Error handlers
  */
-$c = $app->getContainer();
 $c['errorHandler'] = function ($c) {
     return function ($request, $response, Exception $exception) use ($c) {
+        $c['logger']->addInfo("Exception: " . $exception->getMessage() . " at " . $exception->getFile() . ":" . $exception->getLine());
+        $c['logger']->addInfo("Stacktrace: " . $exception->getTraceAsString());
         return $c['response']->withStatus(500)
             ->withHeader('Content-Type', 'application/json')
             // We send "status": "WRAPPER ERROR" so we can tell this error apart from Payone error messages
