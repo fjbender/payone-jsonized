@@ -17,8 +17,8 @@ After that you can use either [configure your webserver to use the public/index.
 
 Then you can POST Payone API requests against the `/request/` resource as JSON and will receive a JSON response:
 
-    $ curl -s -H "Content-Type: application/json" -X POST -d {"mode":"test","request":"invalid"} http://localhost:8888/request/
-      {"status":"ERROR","errorcode":"1202","errormessage":"Parameter {request} faulty or missing","customermessage":"An error occured while processing this transaction (wrong parameters)."}
+    $ curl -s -H "Content-Type: application/json" -X POST -d '{"mode":"test", "request":"preauthorization"}' http://localhost:8888/request/
+    {"status":"ERROR","errorcode":"1203","errormessage":"Parameter {mid} faulty or missing","customermessage":"An error occured while processing this transaction (wrong parameters)."}
 
 
 ## Legal notice

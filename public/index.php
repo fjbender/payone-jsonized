@@ -1,50 +1,49 @@
 <?php
+/**
+ * @author Florian Bender <me@fbender.de>
+ * @copyright (c) 2016 Florian Bender
+ * @link https://github.com/fjbender/payone-jsonized
+ */
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 
 require '../vendor/autoload.php';
 
 // to get Payone API stuff
-function load_payone_api_class($class)
-{
+spl_autoload_register(function ($class) {
     $namespace = explode('\\', $class);
     if ($namespace[0] != "Payone") {
         return false;
     }
-
     $path = '../classes/' . implode(DIRECTORY_SEPARATOR, $namespace) . '.php';
     if (file_exists($path)) {
         require_once($path);
+        return true;
     } else {
         return false;
     }
-}
+});
 
-spl_autoload_register('load_payone_api_class');
-
-$config['displayErrorDetails'] = true;
-$config['addContentLengthHeader'] = false;
-
-$app = new Slim\App($config);
+$app = new Slim\App();
 
 /**
  * Error handlers
  */
-
 $c = $app->getContainer();
 $c['errorHandler'] = function ($c) {
-    return function ($request, $response, $exception) use ($c) {
+    return function ($request, $response, Exception $exception) use ($c) {
         return $c['response']->withStatus(500)
-            ->withHeader('Content-Type', 'text/html')
-            ->write('Internal Server Error');
+            ->withHeader('Content-Type', 'application/json')
+            // We send "status": "WRAPPER ERROR" so we can tell this error apart from Payone error messages
+            ->write('{"status": "WRAPPER ERROR", "errormessage": "' . $exception->getMessage() . '"}"');
     };
 };
 
 $c['notFoundHandler'] = function ($c) {
     return function ($request, $response) use ($c) {
         return $c['response']->withStatus(404)
-            ->withHeader('Content-Type', 'text/html')
-            ->write('Not found');
+            ->withHeader('Content-Type', 'application/json')
+            ->write('{"status": "WRAPPER ERROR", "errormessage": "Resource not found"}');
     };
 };
 
