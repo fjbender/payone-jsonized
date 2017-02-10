@@ -8,6 +8,7 @@ namespace Payone\Api;
 
 use GuzzleHttp\Client;
 use Psr\Http\Message\RequestInterface as HttpRequest;
+use Fbender\Jsonized\Exceptions\InvalidJsonException as InvalidJsonException;
 
 /**
  * Class Request
@@ -24,7 +25,7 @@ class Request
     {
         $body = json_decode($request->getBody()->getContents(), true);
         if ($body === null) {
-            throw new \Exception("JSON Error: " . json_last_error_msg());
+            throw new InvalidJsonException("JSON Error: " . json_last_error_msg());
         }
         // Tell the people it's us
         $body['sdk_name'] = 'fjbender/payone-jsonized';
